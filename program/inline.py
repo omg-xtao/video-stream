@@ -17,6 +17,7 @@ along with this program. If not, see <https://www.gnu.org/licenses/licenses.html
 """
 
 
+from program.utils.inline import markup
 from pyrogram import Client, errors
 from pyrogram.types import (
     InlineQuery,
@@ -30,8 +31,16 @@ from youtubesearchpython import VideosSearch
 async def inline(client: Client, query: InlineQuery):
     answers = []
     search_query = query.query.lower().strip().rstrip()
-
-    if search_query == "":
+    if text.strip() == "":
+        try:
+            await client.answer_inline_query(
+                query.id,
+                results=markup,
+                cache_time=10,
+            )
+        except Exception:
+            return
+    elif search_query == "":
         await client.answer_inline_query(
             query.id,
             results=answers,
@@ -41,7 +50,6 @@ async def inline(client: Client, query: InlineQuery):
         )
     else:
         search = VideosSearch(search_query, limit=50)
-
         for result in search.result()["result"]:
             answers.append(
                 InlineQueryResultArticle(
