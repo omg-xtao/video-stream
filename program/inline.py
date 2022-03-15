@@ -30,7 +30,7 @@ from youtubesearchpython import VideosSearch
 @Client.on_inline_query()
 async def inline(client: Client, query: InlineQuery):
     answers = []
-    search_query = query.query.lower().strip().rstrip()
+    search_query = query.query.strip().lower()
     if text.strip() == "":
         try:
             await client.answer_inline_query(
@@ -40,15 +40,16 @@ async def inline(client: Client, query: InlineQuery):
             )
         except Exception:
             return
-    elif search_query == "":
-        await client.answer_inline_query(
-            query.id,
-            results=answers,
-            switch_pm_text="Type the YouTube video name to search !",
-            switch_pm_parameter="help",
-            cache_time=0,
-        )
     else:
+        if search_query == "":
+            await client.answer_inline_query(
+                query.id,
+                results=answers,
+                switch_pm_text="Type the YouTube video name to search !",
+                switch_pm_parameter="help",
+                cache_time=0,
+            )
+            return
         search = VideosSearch(search_query, limit=50)
         for result in search.result()["result"]:
             answers.append(
